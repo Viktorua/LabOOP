@@ -39,6 +39,12 @@
     <ClCompile Include="TruckParser.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="VehicleStorage.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Car.h">
@@ -68,8 +74,19 @@
     <ClInclude Include="TruckParser.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="VehicleStorage.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="InputData.txt" />
+    <Text Include="Input.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="InputData.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
   </ItemGroup>
 </Project>

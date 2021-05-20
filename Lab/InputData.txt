@@ -1,23 +1,20 @@
 Truck
-{
-	Brand : Volvo
-	MaxSpeed : 200
-	Mileage : 200000
-	CountOfOwner : 2
-}
+Brand : Volvo
+MaxSpeed : 200
+Mileage : 200000
+CountOfOwner : 2
+MaxCarryingCapacity : 2000
 
 Car
-{
 Brand : Mersedes-Benz
 MaxSpeed : 360
 Mileage : 90000
 CountOfOwner : 0
-}
+CarBodyType : SEDAN
 
 Car
-{
-	Brand : Lamborgini
-	MaxSpeed : 480
-	Mileage : 4500
-	CountOfOwner : 1
-}
+Brand : Lamborgini
+MaxSpeed : 480
+Mileage : 4500
+CountOfOwner : 1
+CarBodyType : SPORTS_CAR

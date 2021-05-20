@@ -18,6 +18,7 @@ std::string Car::ToString() const
 {
 	std::ostringstream sout;
 
+	sout << GetType() << std::endl;
 	sout << DrivableBase::ToString();
 	sout << "Car body type : " << _bodyType;
 

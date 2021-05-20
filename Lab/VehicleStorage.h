@@ -6,40 +6,52 @@
 
 class VehicleStorage
 {
-	using Type = std::string;
-	using VectorOfElement = std::vector<std::pair<Type, IDrivable*>>;
+	using MapOfItem = std::map<int, IDrivable*>;
 	using MapByBrand = std::map<std::string, std::set<int>>;
 	using MapBySpeed = std::map<double, std::set<int>>;
 	using MapByMileage = std::map<double, std::set<int>>;
 	using MapByOwners = std::map<int, std::set<int>>;
+	using MapByMaxCarryingCapacity = std::map<int, std::set<int>>;
+	using MapByCarBodyType = std::map<std::string, std::set<int>>;
 	using MapByType = std::map<std::string, std::set<int>>;
+	using SetOfAllIndexes = std::set<int>;
 public:
 	VehicleStorage() = default;
+	~VehicleStorage();
 
 	void Add(IDrivable* obj);
 	void Erase(int index);
 	int Size() const;
 
-	std::pair<Type, IDrivable*>& operator[](int index);
-	std::pair<Type, IDrivable*> operator[](int index) const;
+	IDrivable* operator[](int index);
+	const IDrivable* operator[](int index) const;
 
 	std::vector<int> FindByType(const std::string& type);
 	std::vector<int> FindByBrand(const std::string& brand);
 	std::vector<int> FindBySpeed(double speed);
 	std::vector<int> FindByMileage(double mileage);
 	std::vector<int> FindByOwners(int owners);
+	std::vector<int> FindByMaxCarruingCapacity(int maxCarruingCapacity);
+	std::vector<int> FindByCarBodyType(const std::string& carBodyType);
+	std::vector<int> GetIndexes() const;
+
 
 private:
-	std::vector<int> SetToVector(const std::set<int>& set);
+	std::vector<int> SetToVector(const std::set<int>& set) const;
 
-	VectorOfElement _defaultVector;
+	MapOfItem _storage;
 	MapByBrand _indexByBrand;
 	MapBySpeed _indexBySpeed;
 	MapByMileage _indexByMileage;
 	MapByOwners _indexByOwners;
+	MapByCarBodyType _indexByCarBodyType;
+	MapByMaxCarryingCapacity _indexByMaxCarryingCapacity;
 	MapByType _indexByType;
+	SetOfAllIndexes _indexes;
 
-	const std::pair<std::string, std::string> CAR_TYPE = { "class Car", "Car" };
-	const std::pair<std::string, std::string> TRUCK_TYPE = { "class Truck", "Truck" };
+	int nextIndex = 0;
+
+	const std::string CAR_TYPE = "Car";
+	const std::string TRUCK_TYPE = "Truck";
 };
 

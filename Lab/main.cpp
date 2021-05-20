@@ -1,12 +1,11 @@
-#include "CarParser.h"
-#include "Car.h"
+#include "Interface.h"
 #include <iostream>
 
 int main()
 {
-	//Interface().Run();
+	Interface().Run();
 
-	IDrivable* car = new Car({ "T", 151, 15, 10 }, "SEDAN");
+	/*IDrivable* car = new Car({ "T", 151, 15, 10 }, "SEDAN");
 
 	std::cout << car->GetType() << std::endl;
 	std::cout << car->ToString() << std::endl;
@@ -14,6 +13,6 @@ int main()
 
 	IDrivableParser* parser = IDrivableParser::CreateParser("Car");
 
-	IDrivable* car1 = parser->Parse(std::cin);
+	IDrivable* car1 = parser->Parse(std::cin);*/
 
 }

@@ -1,2 +1,3 @@
-﻿  DrivableBaseParser.cpp
+﻿  Interface.cpp
+D:\VC++ Project\Lab\Lab\Interface.cpp(181,20): warning C4018: <: несоответствие типов со знаком и без знака
   Lab.vcxproj -> D:\VC++ Project\Lab\Debug\Lab.exe

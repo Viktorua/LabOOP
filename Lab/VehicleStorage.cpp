@@ -1,82 +1,124 @@
 #include "VehicleStorage.h"
 #include "Car.h"
+#include "Truck.h"
 #include <typeinfo>
 #include <stdexcept>
 
+VehicleStorage::~VehicleStorage()
+{
+	for (auto it : _storage)
+	{
+		delete it.second;
+	}
+}
+
 void VehicleStorage::Add(IDrivable* obj)
 {
-
-	if (typeid(*obj).name() == CAR_TYPE.first)
+	if (!obj)
 	{
-		_defaultVector.push_back(std::make_pair(CAR_TYPE.second, obj));
-		_indexByType[CAR_TYPE.second].insert(_defaultVector.size() - 1);
-	}
-	else if (typeid(*obj).name() == TRUCK_TYPE.first)
-	{
-		_defaultVector.push_back(std::make_pair(TRUCK_TYPE.second, obj));
-		_indexByType[TRUCK_TYPE.second].insert(_defaultVector.size() - 1);
+		throw std::invalid_argument("Pointer is equal null!");
 	}
 
-	dynamic_cast<Car*>(_defaultVector[0].second)->f();
-	_indexByBrand[_defaultVector[_defaultVector.size() - 1].second->GetBrand()].insert(_defaultVector.size() - 1);
-	_indexBySpeed[_defaultVector[_defaultVector.size() - 1].second->GetMaxSpeed()].insert(_defaultVector.size() - 1);
-	_indexByMileage[_defaultVector[_defaultVector.size() - 1].second->GetMileage()].insert(_defaultVector.size() - 1);
-	_indexByOwners[_defaultVector[_defaultVector.size() - 1].second->GetCountOfOwners()].insert(_defaultVector.size() - 1);	
+	int currentIndex = nextIndex++;
+
+	_storage[currentIndex] = obj;
+	_indexes.insert(currentIndex);
+	_indexByType[obj->GetType()].insert(currentIndex);
+
+	if (obj->GetType() == CAR_TYPE)
+	{
+		Car* currentCarItem = dynamic_cast<Car*>(obj);
+
+		if (currentCarItem) 
+		{
+			_indexByCarBodyType[currentCarItem->GetBodyType()].insert(currentIndex);
+		}
+	
+	}
+	else if (obj->GetType() == TRUCK_TYPE)
+	{
+		Truck* currentTruckItem = dynamic_cast<Truck*>(obj);
+
+		if (currentTruckItem)
+		{
+			_indexByMaxCarryingCapacity[currentTruckItem->GetMaxCarryingÑapacity()].insert(currentIndex);
+		}
+	}
+
+	_indexByBrand[obj->GetBrand()].insert(currentIndex);
+	_indexBySpeed[obj->GetMaxSpeed()].insert(currentIndex);
+	_indexByMileage[obj->GetMileage()].insert(currentIndex);
+	_indexByOwners[obj->GetCountOfOwners()].insert(currentIndex);
 }
 
 void VehicleStorage::Erase(int index)
 {
-	if (0 <= index && index < _defaultVector.size())
+	if (_storage.find(index) != _storage.end())
 	{
-		auto it = _defaultVector.begin();
-		for (int i = 0; i < index; i++, it++);
+		IDrivable* currentItem = _storage[index];
+		_indexes.erase(index);
+		_indexByType[currentItem->GetType()].erase(index);
 
-		_indexByBrand[_defaultVector[index].second->GetBrand()].erase(index);
-		_indexBySpeed[_defaultVector[index].second->GetMaxSpeed()].erase(index);
-		_indexByMileage[_defaultVector[index].second->GetMileage()].erase(index);
-		_indexByOwners[_defaultVector[index].second->GetCountOfOwners()].erase(index);
-		_defaultVector.erase(it);
-		return;
+		if (currentItem->GetType() == CAR_TYPE)
+		{
+			Car* currentCarItem = dynamic_cast<Car*>(currentItem);
+			_indexByCarBodyType[currentCarItem->GetBodyType()].erase(index);
+		}
+		
+		if (currentItem->GetType() == TRUCK_TYPE)
+		{
+			Truck* currentTruckItem = dynamic_cast<Truck*>(currentItem);
+			_indexByMaxCarryingCapacity[currentTruckItem->GetMaxCarryingÑapacity()].erase(index);
+		}
+
+		_indexByBrand[currentItem->GetBrand()].erase(index);
+		_indexBySpeed[currentItem->GetMaxSpeed()].erase(index);
+		_indexByMileage[currentItem->GetMaxSpeed()].erase(index);
+		_indexByOwners[currentItem->GetCountOfOwners()].insert(index);
 	}
 
-	throw std::out_of_range("No such element!");
+	throw std::runtime_error("No such element!");
 }
 
 int VehicleStorage::Size() const
 {
-	return _defaultVector.size();
+	return _storage.size();
 }
 
-std::pair<VehicleStorage::Type, IDrivable*>& VehicleStorage::operator[](int index)
+IDrivable* VehicleStorage::operator[](int index)
 {
-	if (index < 0 || index >= _defaultVector.size())
+	auto it = _storage.find(index);
+
+	if (it != _storage.end())
 	{
-		throw std::out_of_range("Out of range of container!");
+		return it->second;
 	}
 
-	return _defaultVector[index];
+	throw std::runtime_error("No such item!");
 }
 
-std::pair<VehicleStorage::Type, IDrivable*> VehicleStorage::operator[](int index) const
+const IDrivable* VehicleStorage::operator[](int index) const
 {
-	if (index < 0 || index >= _defaultVector.size())
+	auto it = _storage.find(index);
+
+	if (it != _storage.end())
 	{
-		throw std::out_of_range("Out of range of container!");
+		return it->second;
 	}
 
-	return _defaultVector[index];
+	throw std::runtime_error("No such item!");
 }
 
 std::vector<int> VehicleStorage::FindByType(const std::string& type) 
 {
-	if (type == CAR_TYPE.second)
+	if (type == CAR_TYPE)
 	{
-		return SetToVector(_indexByType[CAR_TYPE.second]);
+		return SetToVector(_indexByType[CAR_TYPE]);
 	}
 
-	if (type == TRUCK_TYPE.second)
+	if (type == TRUCK_TYPE)
 	{
-		return SetToVector(_indexByType[TRUCK_TYPE.second]);
+		return SetToVector(_indexByType[TRUCK_TYPE]);
 	}
 
 	return std::vector<int>();
@@ -102,7 +144,22 @@ std::vector<int> VehicleStorage::FindByOwners(int owners)
 	return SetToVector(_indexByOwners[owners]);
 }
 
-std::vector<int> VehicleStorage::SetToVector(const std::set<int>& set)
+std::vector<int> VehicleStorage::FindByMaxCarruingCapacity(int maxCarruingCapacity)
+{
+	return SetToVector(_indexByMaxCarryingCapacity[maxCarruingCapacity]);
+}
+
+std::vector<int> VehicleStorage::FindByCarBodyType(const std::string& carBodyType)
+{
+	return SetToVector(_indexByCarBodyType[carBodyType]);
+}
+
+std::vector<int> VehicleStorage::GetIndexes() const
+{
+	return SetToVector(_indexes);
+}
+
+std::vector<int> VehicleStorage::SetToVector(const std::set<int>& set) const
 {
 	std::vector<int> vec;
 

@@ -20,6 +20,7 @@ std::string Truck::ToString() const
 {
 	std::ostringstream sout;
 
+	sout << GetType() << std::endl;
 	sout << DrivableBase::ToString();
 	sout << "Max carrying capacity : " << _maxCarryingÑapacity;
 

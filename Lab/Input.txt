@@ -1,15 +1,13 @@
 Car
-{
-	Brand : Lada
-	MaxSpeed : 200
-	Mileage : 190000
-	CountOfOwner : 2
-}
+Brand : Lada
+MaxSpeed : 200
+Mileage : 190000
+CountOfOwner : 2
+CarBodyType : HATCHBACK
 
 Truck
-{
-	Brand : ZIL
-	MaxSpeed : 180
-	Mileage : 50000
-	CountOfOwner : 1
-}
+Brand : ZIL
+MaxSpeed : 180
+Mileage : 50000
+CountOfOwner : 1
+MaxCarryingCapacity : 4500

@@ -144,9 +144,11 @@
     <ClCompile Include="DrivableBase.cpp" />
     <ClCompile Include="DrivableBaseParser.cpp" />
     <ClCompile Include="IDrivableParser.cpp" />
+    <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Truck.cpp" />
     <ClCompile Include="TruckParser.cpp" />
+    <ClCompile Include="VehicleStorage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Car.h" />
@@ -156,10 +158,13 @@
     <ClInclude Include="DrivableBaseParser.h" />
     <ClInclude Include="IDrivable.h" />
     <ClInclude Include="IDrivableParser.h" />
+    <ClInclude Include="Interface.h" />
     <ClInclude Include="Truck.h" />
     <ClInclude Include="TruckParser.h" />
+    <ClInclude Include="VehicleStorage.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Input.txt" />
     <Text Include="InputData.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,6 +1,7 @@
 #include "Interface.h"
 #include "IDrivableParser.h"
 #include "IDrivable.h"
+#include <sstream>
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
@@ -16,27 +17,23 @@ void Interface::Run()
 			int action;
 			PrintMainMenu();
 
-			std::cout << MAIN_MENU[NUMBERS_OF_MENU::POSITION_SIX];
 			std::cin >> action;
 
 			switch (action)
 			{
-			case NUMBERS_OF_MENU::POSITION_ZERO:
+			case NUMBERS_OF_MAIN_MENU::EXIT:
 				flag = false;
 				break;
-			case NUMBERS_OF_MENU::POSITION_ONE:
-				ReadDataFromFile();
+			case NUMBERS_OF_MAIN_MENU::READ_DATA:
+				ReadData();
 				break;
-			case NUMBERS_OF_MENU::POSITION_TWO:
+			case NUMBERS_OF_MAIN_MENU::PRINT_STORAGE:
 				PrintStorage();
 				break;
-			case NUMBERS_OF_MENU::POSITION_THREE:
+			case NUMBERS_OF_MAIN_MENU::FIND:
 				FindAndPrint();
 				break;
-			case NUMBERS_OF_MENU::POSITION_FOUR:
-				PrintTestDrive();
-				break;
-			case NUMBERS_OF_MENU::POSITION_FIVE:
+			case NUMBERS_OF_MAIN_MENU::SELL:
 				Sell();
 				break;
 			default:
@@ -53,12 +50,12 @@ void Interface::Run()
 
 void Interface::PrintMainMenu() const
 {
-	std::cout << NUMBERS_OF_MENU::POSITION_ONE << MAIN_MENU[NUMBERS_OF_MENU::POSITION_ONE] << std::endl;
-	std::cout << NUMBERS_OF_MENU::POSITION_TWO << MAIN_MENU[NUMBERS_OF_MENU::POSITION_TWO] << std::endl;
-	std::cout << NUMBERS_OF_MENU::POSITION_THREE << MAIN_MENU[NUMBERS_OF_MENU::POSITION_THREE] << std::endl;
-	std::cout << NUMBERS_OF_MENU::POSITION_FOUR << MAIN_MENU[NUMBERS_OF_MENU::POSITION_FOUR] << std::endl;
-	std::cout << NUMBERS_OF_MENU::POSITION_FIVE << MAIN_MENU[NUMBERS_OF_MENU::POSITION_FIVE] << std::endl;
-	std::cout << NUMBERS_OF_MENU::POSITION_ZERO << MAIN_MENU[NUMBERS_OF_MENU::POSITION_ZERO] << std::endl;
+	std::cout << NUMBERS_OF_MAIN_MENU::READ_DATA << MAIN_MENU[NUMBERS_OF_MAIN_MENU::READ_DATA] << std::endl;
+	std::cout << NUMBERS_OF_MAIN_MENU::PRINT_STORAGE << MAIN_MENU[NUMBERS_OF_MAIN_MENU::PRINT_STORAGE] << std::endl;
+	std::cout << NUMBERS_OF_MAIN_MENU::FIND << MAIN_MENU[NUMBERS_OF_MAIN_MENU::FIND] << std::endl;
+	std::cout << NUMBERS_OF_MAIN_MENU::SELL << MAIN_MENU[NUMBERS_OF_MAIN_MENU::SELL] << std::endl;
+	std::cout << NUMBERS_OF_MAIN_MENU::EXIT << MAIN_MENU[NUMBERS_OF_MAIN_MENU::EXIT] << std::endl;
+	std::cout << MAIN_MENU[NUMBERS_OF_MAIN_MENU::CHOOSE_MESSAGE];
 }
 
 void Interface::PrintInputMenu() const
@@ -75,6 +72,38 @@ std::string Interface::ReadFileName() const
 
 	return fileName;
 }
+
+void Interface::ReadData()
+{
+	PrintTutorial();
+	PrintReadMenu();
+
+	int choose;
+	std::cin >> choose;
+
+	switch (choose)
+	{
+	case NUMERS_OF_READ_DATA_MENU::FROM_FILE:
+		ReadDataFromFile();
+		break;
+	case NUMERS_OF_READ_DATA_MENU::FROM_CONSOLE:
+		ReadDataFromConsole();
+	default:
+		throw ("No such so option!");
+		break;
+	}
+}
+
+void Interface::ReadDataFromConsole()
+{
+	std::string typeOfParser;
+	std::getline(std::cin, typeOfParser);
+
+	IDrivableParser* parser = IDrivableParser::CreateParser(typeOfParser);
+
+	_storage.Add(parser->Parse(std::cin));
+}
+
 
 void Interface::ReadDataFromFile()
 {
@@ -110,34 +139,56 @@ void Interface::ReadDataFromFile()
 		std::cerr << err.what() << std::endl;
 	}
 }
-
 void Interface::PrintStorage() const
 {
-	CheckEmpty();
+	IsStorageEmpty();
 
-	for (int i = 0; i < _storage.Size(); i++)
+	std::cout << "\nYour storage:\n";
+
+	for (auto i : _storage.GetIndexes())
 	{
-		std::cout << _storage[i].first << " {\n";
-		std::cout << "\t" << "Brand : " << _storage[i].second->GetBrand() << std::endl;
-		std::cout << "\t" << "MaxSpeed : " << _storage[i].second->GetMaxSpeed() << std::endl;
-		std::cout << "\t" << "Mileage : " << _storage[i].second->GetMileage() << std::endl;
-		std::cout << "\t" << "CountOfOwner : " << _storage[i].second->GetCountOfOwners() << std::endl;
-		std::cout << "}\n\n";
+		std::cout << "=================================\n";
+		std::cout << _storage[i]->ToString() << std::endl;
+		std::cout << "=================================\n";
 	}
 }
 
-void Interface::PrintTestDrive() const
+void Interface::PrintReadMenu() const
 {
-	CheckEmpty();
-	std::cout << "Please enter an index of eleme, which you what to test: ";
-	int index;
-
-	std::cin >> index;
-
-	std::cout << _storage[index].second->TestDrive() << std::endl;
+	std::cout << READ_DATA_MENU[NUMERS_OF_READ_DATA_MENU::SELECT_TYPE] << std::endl;
+	std::cout << NUMERS_OF_READ_DATA_MENU::FROM_FILE << READ_DATA_MENU[NUMERS_OF_READ_DATA_MENU::FROM_FILE] << std::endl;
+	std::cout << NUMERS_OF_READ_DATA_MENU::FROM_CONSOLE << READ_DATA_MENU[NUMERS_OF_READ_DATA_MENU::FROM_CONSOLE] << std::endl;
+	std::cout << READ_DATA_MENU[NUMERS_OF_READ_DATA_MENU::CHOOSE];
 }
 
-void Interface::CheckEmpty() const
+void Interface::PrintTutorial() const
+{
+	std::cout << "\nYour data must be written in the form (without \"{\" and \"}\"):\n";
+	std::cout << "{Type(Car/Truck)}\n";
+	std::cout << "Brand : {Name of brand}\n";
+	std::cout << "MaxSpeed : {Max speed}\n";
+	std::cout << "Mileage : {Mileage}\n";
+	std::cout << "CarBodyType : {Car body type}/ MaxCarryingCapacity : {Max carrying capacity}\n\n";
+}
+
+std::string Interface::IndexesToString() const
+{
+	std::ostringstream sout;
+	sout << "{ ";
+	
+	auto indexes = _storage.GetIndexes();
+
+	for (int i = 0; i < indexes.size() - 1; i++)
+	{
+		sout << indexes[i] << ", ";
+	}
+	sout << indexes[indexes.size() - 1] << " }";
+
+	return sout.str();
+}
+
+
+void Interface::IsStorageEmpty() const
 {
 	if (!_storage.Size())
 	{
@@ -147,11 +198,13 @@ void Interface::CheckEmpty() const
 
 void Interface::PrintFindMenu() const
 {
-	std::cout << NUMBERS_OF_MENU::POSITION_ONE << FIND_MENU[NUMBERS_OF_MENU::POSITION_ZERO] << std::endl;
-	std::cout << NUMBERS_OF_MENU::POSITION_TWO << FIND_MENU[NUMBERS_OF_MENU::POSITION_ONE] << std::endl;
-	std::cout << NUMBERS_OF_MENU::POSITION_THREE << FIND_MENU[NUMBERS_OF_MENU::POSITION_TWO] << std::endl;
-	std::cout << NUMBERS_OF_MENU::POSITION_FOUR << FIND_MENU[NUMBERS_OF_MENU::POSITION_THREE] << std::endl;
-	std::cout << NUMBERS_OF_MENU::POSITION_FIVE << FIND_MENU[NUMBERS_OF_MENU::POSITION_FOUR] << std::endl;
+	std::cout << NUMERS_OF_FIND_MENU::OF_BRAND					<< FIND_MENU[NUMERS_OF_FIND_MENU::OF_BRAND] << std::endl;
+	std::cout << NUMERS_OF_FIND_MENU::OF_MAX_SPEED				<< FIND_MENU[NUMERS_OF_FIND_MENU::OF_MAX_SPEED] << std::endl;
+	std::cout << NUMERS_OF_FIND_MENU::OF_MILEAGE				<< FIND_MENU[NUMERS_OF_FIND_MENU::OF_MILEAGE] << std::endl;
+	std::cout << NUMERS_OF_FIND_MENU::OF_COUNT_OF_OWNERS		<< FIND_MENU[NUMERS_OF_FIND_MENU::OF_COUNT_OF_OWNERS] << std::endl;
+	std::cout << NUMERS_OF_FIND_MENU::OF_CAR_BODY_TYPE			<< FIND_MENU[NUMERS_OF_FIND_MENU::OF_CAR_BODY_TYPE] << std::endl;
+	std::cout << NUMERS_OF_FIND_MENU::OF_MAX_CARRYING_CAPACITY  << FIND_MENU[NUMERS_OF_FIND_MENU::OF_MAX_CARRYING_CAPACITY] << std::endl;
+	std::cout << NUMERS_OF_FIND_MENU::OF_TYPE					<< FIND_MENU[NUMERS_OF_FIND_MENU::OF_TYPE] << std::endl;
 }
 
 void Interface::FindAndPrint() 
@@ -167,7 +220,7 @@ void Interface::FindAndPrint()
 
 	switch (answer)
 	{
-	case NUMBERS_OF_MENU::POSITION_ONE:
+	case NUMERS_OF_FIND_MENU::OF_BRAND:
 	{	
 		std::cout << "Input your brand: ";
 
@@ -177,7 +230,7 @@ void Interface::FindAndPrint()
 		indexes = _storage.FindByBrand(brand);
 	}
 		break;
-	case NUMBERS_OF_MENU::POSITION_TWO:
+	case NUMERS_OF_FIND_MENU::OF_MAX_SPEED:
 	{
 		std::cout << "Input your max speed: ";
 
@@ -187,7 +240,7 @@ void Interface::FindAndPrint()
 		indexes = _storage.FindBySpeed(maxSpeed);
 	}
 		break;
-	case NUMBERS_OF_MENU::POSITION_THREE:
+	case NUMERS_OF_FIND_MENU::OF_MILEAGE:
 	{
 		std::cout << "Input your mileage: ";
 
@@ -197,7 +250,7 @@ void Interface::FindAndPrint()
 		indexes = _storage.FindByMileage(mileage);
 	}
 		break;
-	case NUMBERS_OF_MENU::POSITION_FOUR:
+	case NUMERS_OF_FIND_MENU::OF_COUNT_OF_OWNERS:
 	{
 		std::cout << "Input your count of owners: ";
 
@@ -207,9 +260,29 @@ void Interface::FindAndPrint()
 		indexes = _storage.FindByOwners(countOfOwners);
 	}
 		break;
-	case NUMBERS_OF_MENU::POSITION_FIVE:
+	case NUMERS_OF_FIND_MENU::OF_CAR_BODY_TYPE:
 	{
 		std::cout << "Input your type: ";
+
+		std::string carBodyType;
+		std::cin >> carBodyType;
+
+		indexes = _storage.FindByCarBodyType(carBodyType);
+	}
+		break;
+	case NUMERS_OF_FIND_MENU::OF_MAX_CARRYING_CAPACITY:
+	{
+		std::cout << "Input your max carrying capacity: ";
+
+		int capacity;
+		std::cin >> capacity;
+
+		indexes = _storage.FindByMaxCarruingCapacity(capacity);
+	}
+		break;
+	case NUMERS_OF_FIND_MENU::OF_TYPE:
+	{
+		std::cout << "Input your type (Car/Truck): ";
 
 		std::string type;
 		std::cin >> type;
@@ -218,7 +291,7 @@ void Interface::FindAndPrint()
 	}
 		break;
 	default:
-		throw std::logic_error("Can`t find objects for this type of search\n");
+		throw std::logic_error("There is no such option!");
 		break;
 	}
 
@@ -231,26 +304,23 @@ void Interface::FindAndPrint()
 		std::cout << std::endl;
 		for (int i : indexes)
 		{
-			std::cout << _storage[i].first << " {\n";
-			std::cout << "\t" << "Brand : " << _storage[i].second->GetBrand() << std::endl;
-			std::cout << "\t" << "MaxSpeed : " << _storage[i].second->GetMaxSpeed() << std::endl;
-			std::cout << "\t" << "Mileage : " << _storage[i].second->GetMileage() << std::endl;
-			std::cout << "\t" << "CountOfOwner : " << _storage[i].second->GetCountOfOwners() << std::endl;
-			std::cout << "}\n";
+			std::cout << _storage[i]->ToString() << std::endl;
 		}
 	}
 }
 
 void Interface::Sell()
 {
-	std::cout << SELL_MESSAGE;
+	IsStorageEmpty();
+
+	std::cout << SELL_MESSAGE << IndexesToString() << ": ";
 	int index;
 
 	std::cin >> index;
 
 	_storage.Erase(index);
 
-	std::cout << "Selling secces!\n";
+	std::cout << "Selling success!\n";
 }
 
 
