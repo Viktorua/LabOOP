@@ -1,0 +1,15 @@
+Car
+{
+	Brand : Lada
+	MaxSpeed : 200
+	Mileage : 190000
+	CountOfOwner : 2
+}
+
+Truck
+{
+	Brand : ZIL
+	MaxSpeed : 180
+	Mileage : 50000
+	CountOfOwner : 1
+}

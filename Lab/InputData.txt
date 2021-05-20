@@ -1,0 +1,23 @@
+Truck
+{
+	Brand : Volvo
+	MaxSpeed : 200
+	Mileage : 200000
+	CountOfOwner : 2
+}
+
+Car
+{
+Brand : Mersedes-Benz
+MaxSpeed : 360
+Mileage : 90000
+CountOfOwner : 0
+}
+
+Car
+{
+	Brand : Lamborgini
+	MaxSpeed : 480
+	Mileage : 4500
+	CountOfOwner : 1
+}
